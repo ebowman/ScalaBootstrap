@@ -1,0 +1,39 @@
+Gilt/AOL Hackathon Scala Starter
+6 January 2012
+Eric Bowman/ebowman@gilt.com
+
+This should "just work" once you've cloned this repo.
+
+I've written a little scala program using actors via Akka, for searching for a
+keyword in Gilt's active & upcoming sales feeds.
+
+To run it, from a bash shell, do:
+
+./sbt
+
+This will start Simple Build Tool, and after downloading a few things, it
+should give you a prompt like:
+
+>
+
+Type run, follows by a search term:
+
+> run boots
+
+The program should output the sale title and URL of all sales which had the
+word "boots" in the sale description, something like:
+
+> run boots
+[info] Running SimpleAtomSearch boots
+Searching for boots
+Get the Look: Winter Getaway -> http://www.gilt.com/sale/men/get-the-look-win-749
+Belle by Sigerson Morrison -> http://www.gilt.com/sale/women/belle-by-sigerso-060
+Rosegold -> http://www.gilt.com/sale/women/rosegold-938
+Charles Jourdan -> http://www.gilt.com/sale/women/dkny-shoes-428
+Brad Goreski for Gilt MAN -> http://www.gilt.com/sale/men/brad-goreski-for-159
+Into the Woods: Rugged Apparel & Accessories -> http://www.gilt.com/sale/men/into-the-woods-rugge
+Anouk -> http://www.gilt.com/sale/women/anouk-660
+Rag & Bone Shoes & Accessories -> http://www.gilt.com/sale/women/rag-bone-766
+[success] Total time: 2 s, completed Jan 6, 2012 2:53:54 PM
+> 
+
