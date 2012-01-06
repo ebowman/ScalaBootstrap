@@ -6,7 +6,8 @@ scalaVersion := "2.9.1"
 
 resolvers ++= Seq(
     "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/",
-    "Akka Repository" at "http://akka.io/repository/"
+    "Akka Repository" at "http://akka.io/repository/",
+    "java.net repo" at "http://download.java.net/maven/2/"
 )
 
 libraryDependencies ++= Seq(
