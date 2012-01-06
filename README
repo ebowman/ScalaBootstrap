@@ -259,4 +259,31 @@ Jewelry by Jennifer Miller & Karma Jewels -> http://www.gilt.com/sale/women/fine
 Jewelry by Jennifer Miller & Karma Jewels -> http://www.gilt.com/sale/men/fine-jewelry-by-057
 [success] Total time: 2 s, completed Jan 6, 2012 4:03:55 PM
 
+SBT & IDEs
+==========
 
+To integrate sbt with IntelliJ:
+
+    Add the following lines to ~/.sbt/plugins/build.sbt or PROJECT_DIR/project/plugins.sbt
+
+    resolvers += "sbt-idea-repo" at "http://mpeltonen.github.com/maven/"
+
+    addSbtPlugin("com.github.mpeltonen" % "sbt-idea" % "0.11.0")
+
+    use gen-idea sbt task to create Idea project files
+
+    (e.g., ./sbt gen-idea)
+
+    See https://github.com/mpeltonen/sbt-idea
+
+To integrate sbt with Eclipse:
+
+    Add the following lines to ~/.sbt/plugins/build.sbt or PROJECT_DIR/project/plugins.sbt
+
+    addSbtPlugin("com.typesafe.sbteclipse" % "sbteclipse-plugin" % "2.0.0-M3")
+
+    use eclipse sbt task to create Eclipse project files
+
+    (e.g., ./sbt eclipse)
+
+    See https://github.com/typesafehub/sbteclipse
