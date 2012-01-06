@@ -13,6 +13,8 @@ resolvers ++= Seq(
 libraryDependencies ++= Seq(
     "com.typesafe.akka" % "akka-actor" % "2.0-M2",
     "com.typesafe.akka" % "akka-remote" % "2.0-M2",
-    "com.typesafe.akka" % "akka-kernel" % "2.0-M2"
+    "com.typesafe.akka" % "akka-kernel" % "2.0-M2",
+    "org.scalatest" %% "scalatest" % "1.6.1" % "test",
+    "org.scala-tools.testing" %% "scalacheck" % "1.9" % "test"
 )
 

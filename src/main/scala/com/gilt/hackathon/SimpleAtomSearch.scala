@@ -1,6 +1,9 @@
+package com.gilt.hackathon
+
 import akka.actor.{Actor, Props, ActorSystem}
 import java.util.concurrent.CountDownLatch
 import xml.XML
+import java.net.URL
 
 
 object SimpleAtomSearch extends App {
@@ -24,9 +27,9 @@ case class Entry(title: String, description: String, url: String)
 
 case class Search(query: String)
 
-case class SearchTask(url: String, query: String)
+case class SearchTask(url: URL, query: String)
 
-case class Result(url: String, items: Traversable[Entry])
+case class Result(url: URL, items: Traversable[Entry])
 
 class Master(latch: CountDownLatch) extends Actor {
   val urls = Seq("https://api.gilt.com/v1/sales/men/active.atom",
@@ -40,10 +43,10 @@ class Master(latch: CountDownLatch) extends Actor {
   var pending = urls.size
   val results = collection.mutable.Set[Entry]()
 
-  protected def receive = {
+  def receive = {
     case Search(query) =>
       urls foreach {
-        url => SimpleAtomSearch.system.actorOf(Props(new Slave)) ! SearchTask(url, query)
+        url => SimpleAtomSearch.system.actorOf(Props(new Slave)) ! SearchTask(new URL(url), query)
       }
     case Result(url, items) =>
       pending -= 1
@@ -56,7 +59,7 @@ class Master(latch: CountDownLatch) extends Actor {
 }
 
 class Slave extends Actor {
-  protected def receive = {
+  def receive = {
     case SearchTask(url, query) =>
       val atomXml = XML.load(url)
       val result = for {
