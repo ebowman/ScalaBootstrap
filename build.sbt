@@ -1,4 +1,4 @@
-name := "scala-streamer"
+name := "scala-shoutcast"
 
 version := "0.0.1"
 
