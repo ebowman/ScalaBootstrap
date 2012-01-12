@@ -33,9 +33,13 @@ case class Chunker(filesIter: Iterator[File], chunkSize: Int, file: Option[File]
 
     val bytes = new Array[Byte](chunkSize)
     
-    val is = new BufferedInputStream(new FileInputStream(currentFile))
-    is.skip(position)
-    val bytesRead = is.read(bytes, 0, chunkSize)
+    try {
+      val is = new BufferedInputStream(new FileInputStream(currentFile))
+      is.skip(position)
+      val bytesRead = is.read(bytes, 0, chunkSize)
+    } finally {
+      is.close();
+    }
     
     if (bytesRead < chunkSize) {
       val myTuple = Chunker(filesIter, chunkSize - bytesRead, Option.empty, 0).next
