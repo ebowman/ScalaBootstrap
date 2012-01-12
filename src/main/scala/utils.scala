@@ -2,19 +2,25 @@ package com.gilt.hackathon
 
 import java.io.{BufferedReader, InputStreamReader, InputStream}
 
-/**
- * Utility to iterate through header lines.
- */
-case class LineIterator(input: InputStream) extends Iterator[String] {
+class LineIterator(input: InputStream) extends Iterable[String] {
   private val reader = new BufferedReader(new InputStreamReader(input, "US-ASCII"))
-  private var nextLine: String = _
 
-  def hasNext = {
-    nextLine = reader.readLine()
-    nextLine != null
+  def iterator = new Iterator[String] {
+    private var _next: String = _
+
+    def hasNext = {
+      _next = reader.readLine()
+      _next != null
+    }
+
+    def next() = _next
   }
+}
 
-  def next(): String = {
-    nextLine
+object ImplicitHelpers {
+  implicit def f2r(f: () => Unit) = new Runnable {
+    def run() {
+      f()
+    }
   }
 }
