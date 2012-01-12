@@ -15,13 +15,13 @@ object Server extends App {
   val executor = Executors.newScheduledThreadPool(Runtime.getRuntime.availableProcessors)
 
   while (true) {
+    log.info("Starting server on port " + port)
     val serverSocket = new ServerSocket(port)
     try {
       while (true) {
-        log.info("Starting server on port " + port)
         val socket = serverSocket.accept()
-        val actor = Actor.actorOf(new RequestActor).start()
-        actor ! StartStreaming(socket, files)
+        val actor = Actor.actorOf(new RequestActor(socket, files)).start()
+        actor ! StartStreaming
       }
     } catch {
       case e =>
