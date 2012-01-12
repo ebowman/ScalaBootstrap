@@ -1,6 +1,8 @@
 package com.gilt.hackathon
 
 import java.io.{FileInputStream, File}
+import java.text.DecimalFormat
+import javazoom.jl.decoder.Bitstream
 
 
 case class ChunkIterator(chunkSize: Int, files: Iterable[File]) extends Iterator[Array[Byte]] {
@@ -39,4 +41,22 @@ case class ChunkIterator(chunkSize: Int, files: Iterable[File]) extends Iterator
     }
     buffer
   }
+
+
+  def curStatus: String = {
+    curFile.getName + " " + new DecimalFormat("(##.#%)").format(1d * offset / curFile.length)
+  }
+
+  def curBitRate: Int = {
+    val input = new FileInputStream(curFile)
+    try {
+      val bitstream = new Bitstream(input)
+      val header = bitstream.readFrame
+      bitstream.close()
+      header.bitrate
+    } finally {
+      input.close()
+    }
+  }
+
 }

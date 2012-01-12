@@ -14,7 +14,7 @@ case class LineIterator(input: InputStream) extends Iterator[String] {
     nextLine != null
   }
 
-  def next() {
+  def next(): String = {
     nextLine
   }
 }
