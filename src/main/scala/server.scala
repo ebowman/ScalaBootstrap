@@ -6,16 +6,23 @@ import akka.actor.Actor
 
 object Server extends App {
 
-  var counter = 0;
-  val ring = new Ring(find(new File("."), _.getName.endsWith(".xml")))
-  var chunker = new Chunker(ring, 64)
-  while (counter < 500) {
-    val myTuple = chunker.next
-    chunker = myTuple._2
-    val bytes = myTuple._1
-    println(chunker.file.get.getName + ":" + chunker.position + "," + bytes.length + "," + new String(bytes))
-    counter = counter + 1
+  val serverSocket = new ServerSocket(8080)
+  while (true) {
+    val socket = serverSocket.accept()
+    val actor = Actor.actorOf(new RequestActor).start()
+    actor ! StartStream(socket, new Ring(find(new File("/home/boniek/mp3"), _.getName.endsWith(".mp3"))))
   }
+  
+//  var counter = 0;
+//  val ring = new Ring(find(new File("."), _.getName.endsWith(".xml")))
+//  var chunker = new Chunker(ring, 64)
+//  while (counter < 500) {
+//    val myTuple = chunker.next
+//    chunker = myTuple._2
+//    val bytes = myTuple._1
+//    println(chunker.file.get.getName + ":" + chunker.position + "," + bytes.length + "," + new String(bytes))
+//    counter = counter + 1
+//  }
   
   def find(dir: File, filterFunc: (File => Boolean)): Iterable[File] = {
     require(dir.exists)
