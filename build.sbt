@@ -11,7 +11,8 @@ resolvers ++= Seq(
         )
 
 libraryDependencies ++= Seq(
-        "cc.spray.can" % "spray-can" % "0.9.1",
+        "de.huxhorn.sulky" % "de.huxhorn.sulky.3rdparty.jlayer" % "1.0",
+        "se.scalablesolutions.akka" % "akka-actor" % "1.3-RC6",
         "ch.qos.logback" % "logback-classic" % "0.9.28",
         "ch.qos.logback" % "logback-core" % "0.9.28",
         "org.scalatest" %% "scalatest" % "1.6.1" % "test",
