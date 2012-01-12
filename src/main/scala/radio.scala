@@ -26,6 +26,7 @@ class RadioListener(socket: Socket) extends Actor {
   import RadioListener.log
   private var output: OutputStream = _
   private var station: ActorRef = _
+  private var dead = false
 
   def receive = {
     case ListenTo(station) =>
@@ -47,10 +48,13 @@ class RadioListener(socket: Socket) extends Actor {
       f
     } catch {
       case e: IOException =>
-        log.info("Shutting down listener " + socket.getRemoteSocketAddress + ": " + e.toString)
-        station ! Unsubscribe(self)
-        self ! PoisonPill
-        socket.close()
+        if (!dead) {
+          log.info("Shutting down listener " + socket.getRemoteSocketAddress + ": " + e.toString)
+          dead = true
+          station ! Unsubscribe(self)
+          self ! PoisonPill
+          socket.close()
+        }
     }
   }
 }
