@@ -88,7 +88,7 @@ class IcyResponder(chunks: ChunkIterator) {
     val duration = System.currentTimeMillis - startTime
     val bitrate = chunks.curBitRate
     // we may wish to stream slightly faster than the theoretical minimum
-    val realityFactor = 1.0f
+    val realityFactor = 2f
     // effectiveBitsPerSecond = 8000f * chunk.length / duration
     // bitrate = 8000f * chunk.length / (duration + sleep)
     // bitrate*duration + bitrate*sleep = 8000f * chunk.length
