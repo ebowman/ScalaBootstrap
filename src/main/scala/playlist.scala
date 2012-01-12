@@ -49,7 +49,7 @@ class PlaylistActor(socket: Socket, files: Iterable[File]) extends Actor {
       f
     } catch {
       case e: IOException =>
-        log.error("Unexpected exception; closing socket: " + e)
+        log.error("Unexpected exception; closing socket: " + socket.getRemoteSocketAddress + ": " + e)
         self ! PoisonPill
         socket.close()
       case e => e.printStackTrace()

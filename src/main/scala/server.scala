@@ -40,7 +40,7 @@ object Server extends App {
           try {
             while (true) {
               val socket = serverSocket.accept()
-              log.info("Accepted new connection: " + socket)
+              log.info("Accepted new connection: " + socket.getRemoteSocketAddress)
               f(socket)
             }
           } catch {

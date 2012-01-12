@@ -47,7 +47,7 @@ class RadioListener(socket: Socket) extends Actor {
       f
     } catch {
       case e: IOException =>
-        log.info("Shutting down listener: " + e.toString)
+        log.info("Shutting down listener " + socket.getRemoteSocketAddress + ": " + e.toString)
         station ! Unsubscribe(self)
         self ! PoisonPill
         socket.close()
