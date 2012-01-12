@@ -13,7 +13,7 @@ case class Ring[T](thing: Iterable[T]) extends Iterable[T] {
         iter.next()
       } else {
         iter = thing.iterator
-        next()
+        iter.next()
       }
     }
   }
