@@ -6,11 +6,16 @@ import akka.actor.{PoisonPill, ActorRef, Actor}
 import org.slf4j.LoggerFactory
 import java.util.concurrent.TimeUnit
 
+// tells a RadioStation to subscribe this RadioListener
 case class Subscribe(actor: ActorRef)
 
+// tells a RadioStation to unsubscribe this RadioListener
 case class Unsubscribe(actor: ActorRef)
 
+// tells a RadioListener to listen to this station
 case class ListenTo(station: ActorRef)
+
+// tells a RadioListener to push these bytes to its listener socket
 case class Chunk(bytes: Array[Byte])
 
 object RadioListener {
@@ -21,14 +26,15 @@ class RadioListener(socket: Socket) extends Actor {
   import RadioListener.log
   private var output: OutputStream = _
   private var station: ActorRef = _
+
   def receive = {
-    case msg @ ListenTo(_) =>
+    case ListenTo(station) =>
       withCleanup {
+        this.station = station
         new LineIterator(socket.getInputStream).takeWhile(_ != "")
-        station = msg.station
         station ! Subscribe(self)
         output = socket.getOutputStream
-        IcyResponder.writeResponseHeaders(output)
+        IcyResponder.writeResponseHeaders(output, "scala radio streamer", Server.radioPort)
       }
     case Chunk(bytes) =>
       withCleanup {
@@ -64,7 +70,8 @@ class RadioStation(files: Iterable[File]) extends Actor {
     case NextChunk =>
       val chunk = new ByteArrayOutputStream
       val sleep = responder.writeNextChunk(chunk)
-      subscribers.foreach((a: ActorRef) => a ! Chunk(chunk.toByteArray))
+      val bytes = chunk.toByteArray
+      subscribers.foreach((a: ActorRef) => a ! Chunk(bytes))
       Server.executor.schedule(() => self ! NextChunk, sleep, TimeUnit.MILLISECONDS)
   }
 }
