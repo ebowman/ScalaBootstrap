@@ -13,17 +13,6 @@ object Server extends App {
     actor ! StartStream(socket, new Ring(find(new File("/home/boniek/mp3"), _.getName.endsWith(".mp3"))))
   }
   
-//  var counter = 0;
-//  val ring = new Ring(find(new File("."), _.getName.endsWith(".xml")))
-//  var chunker = new Chunker(ring, 64)
-//  while (counter < 500) {
-//    val myTuple = chunker.next
-//    chunker = myTuple._2
-//    val bytes = myTuple._1
-//    println(chunker.file.get.getName + ":" + chunker.position + "," + bytes.length + "," + new String(bytes))
-//    counter = counter + 1
-//  }
-  
   def find(dir: File, filterFunc: (File => Boolean)): Iterable[File] = {
     require(dir.exists)
     require(dir.isDirectory)
@@ -39,20 +28,43 @@ case class NextChunk(output: OutputStream, socket: Socket, chunker: Chunker)
 
 class RequestActor() extends Actor {
   val chunkSize = 1024
-  val header = "icy-metaint: " + chunkSize + "\n"
-  val meta = ""
   
   def receive = {
     case StartStream(socket, files) =>
       val output = socket.getOutputStream
-      output.write(header.getBytes)
+      writeResponseHeaders(output)
       self ! NextChunk(output, socket, new Chunker(files, chunkSize))
     case NextChunk(output, socket, chunker) =>
       val tuple = chunker.next
-      output.write(tuple._1)
-      output.write({0})
-      self ! NextChunk(output, socket, tuple._2)
+      val chunkBytes = tuple._1
+      val newChunker = tuple._2
+      output.write(chunkBytes)
+      writeMetadata(output, newChunker.file.get)
+      self ! NextChunk(output, socket, newChunker)
   }
+  
+  def writeMetadata(output: OutputStream, file: File) {
+    val meta = "StreamTitle=" + file.getName + ";"
+    val metaBytes = meta.getBytes("US-ASCII")
+    val metaBlocks = metaBytes.length / 16 + 1
+    val remainingBytes = Array.fill(metaBlocks * 16 - metaBytes.length) { 0.toByte }
+
+    output.write({metaBlocks.toByte})
+    output.write(metaBytes ++ remainingBytes)
+  }
+  
+  def writeResponseHeaders(output: OutputStream) {
+    val headers = "ICY 200 OK" ::
+      "icy-notice1: Blahblah" ::
+      "icy-name: scala shoutcast" ::
+      "icy-url: http://localhost:8080" ::
+      "icy-metaint: " + chunkSize ::
+      "content-type: audio/mpeg" ::
+      "\r\n" :: Nil
+
+    output.write(headers.mkString("\r\n").getBytes("US-ASCII"))
+  }
+  
 }
 
 case class Chunker(filesIter: Iterator[File], chunkSize: Int, file: Option[File], position: Int) {
