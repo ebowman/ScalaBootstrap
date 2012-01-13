@@ -4,8 +4,8 @@ import java.io.File
 import org.slf4j.LoggerFactory
 import akka.actor.Actor
 import scala.concurrent.ops.spawn
-import java.net.{Socket, ServerSocket}
 import java.util.concurrent.{CountDownLatch, Executors}
+import java.net.{InetAddress, Socket, ServerSocket}
 
 object Server extends App {
   val playlistPort = args.headOption.map(_.toInt).getOrElse(8080)
@@ -36,7 +36,7 @@ object Server extends App {
       try {
         while (true) {
           log.info("Starting server on port " + port)
-          val serverSocket = new ServerSocket(port)
+          val serverSocket = new ServerSocket(port, 50, InetAddress.getByName("0.0.0.0"))
           try {
             while (true) {
               val socket = serverSocket.accept()
